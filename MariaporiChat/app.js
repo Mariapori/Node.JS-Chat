@@ -16,12 +16,14 @@ io.on('connection', (socket) => {
       console.log('Joku poistui osoitteesta ' + socket.request.socket.remoteAddress);
     });
     socket.on('chat message', (msg) => {
+        var now = new Date().toLocaleDateString("fi-FI");
+        var nowtime = new Date().toLocaleTimeString("fi-FI")
         console.log(msg + ' osoitteesta ' + socket.request.socket.remoteAddress);
-        io.emit('chat message', msg + ' (' + socket.request.socket.remoteAddress + ')');
+        io.emit('chat message', nowtime + ' ' + msg);
       });
   });
   
 
-server.listen(3000, () => {
+server.listen(3000,'0.0.0.0', () => {
   console.log('Kuunnellaan *:3000');
 });
