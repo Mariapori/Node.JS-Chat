@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fi">
+    <head>
+        <title>MariaporinChat</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="keskustelu">
+            <ul id="viestit">
+
+            </ul>
+        </div>
+        <div class="viesti">
+                     <input placeholder="Nimimerkki" id="nimimerkki"/>
+                    <input placeholder="Viestisi" id="viesti"/>
+                    <button id="laheta">Lähetä</button>
+        </div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+var socket = io();
+
+var nick = document.getElementById('nimimerkki');
+var message = document.getElementById('viesti');
+var laheta = document.getElementById('laheta');
+var viestit = document.getElementById('viestit');
+
+laheta.addEventListener('click', function(e) {
+  e.preventDefault();
+  if (nick.value && message.value) {
+    socket.emit('chat message', nick.value + ': ' + message.value);
+    message.value = '';
+  }
+});
+
+socket.on('chat message', function(msg) {
+    var item = document.createElement('li');
+    item.textContent = msg;
+    viestit.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+</script>
+    </body>
+</html>
+
+<style>
+    body{
+        margin: 10px 10px 10px 10px;
+    }
+    .keskustelu{
+        background-color: lightblue;
+        margin:0px;
+        padding: 0px;
+        min-height: 200px;
+        border:1px solid black;
+    }
+    .viesti{
+        background-color: white;
+        border: 1px solid black;
+        padding: 5px;
+    }
+input{
+    width: fit-content;
+}
+#viestit{
+    list-style: none;
+}
+</style>
