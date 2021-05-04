@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     </head>
     <body>
-        <div class="keskustelu">
+        <div class="keskustelu" id="keskustelu">
             <ul id="viestit">
 
             </ul>
@@ -24,7 +24,7 @@ var nick = document.getElementById('nimimerkki');
 var message = document.getElementById('viesti');
 var laheta = document.getElementById('laheta');
 var viestit = document.getElementById('viestit');
-
+var kesk = document.getElementById('keskustelu');
 
 laheta.addEventListener('click', function(e) {
   e.preventDefault();
@@ -38,7 +38,7 @@ socket.on('chat message', function(msg) {
     var item = document.createElement('li');
     item.textContent = msg;
     viestit.appendChild(item);
-    window.scrollTo(0, document.body.scrollHeight);
+    kesk.scrollTo(0, document.body.scrollHeight);
   });
 
 socket.on('nickname set', function() {
@@ -50,7 +50,7 @@ socket.on('history', function(history) {
         var item = document.createElement('li');
         item.textContent = history[index];
         viestit.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
+        kesk.scrollTo(0, document.body.scrollHeight);
     }
 });
 
@@ -66,8 +66,10 @@ socket.on('history', function(history) {
         background-color: lightblue;
         margin:0px;
         padding: 0px;
-        min-height: 200px;
         border:1px solid black;
+        overflow-y: scroll;
+        min-height: 200px;
+        max-height: 200px;
     }
     .viesti{
         background-color: white;
@@ -80,4 +82,5 @@ input{
 #viestit{
     list-style: none;
 }
+
 </style>
