@@ -13,9 +13,18 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
     console.log('Joku liittyi osoitteesta ' + socket.request.socket.remoteAddress);
     socket.on('disconnect', () => {
-      console.log('Joku poistui osoitteesta ' + socket.request.socket.remoteAddress);
+      if(socket.nick == null){
+        console.log('Joku poistui osoitteesta ' + socket.request.socket.remoteAddress);
+      }else{
+        io.emit('user left', socket.nick);
+      }
+      
     });
-    socket.on('chat message', (msg) => {
+    socket.on('chat message', (msg, nick) => {
+      if(socket.nick == null){
+        socket.nick = nick;
+        io.to(socket.id).emit('nickname set');
+      }
         var now = new Date().toLocaleDateString("fi-FI");
         var nowtime = new Date().toLocaleTimeString("fi-FI")
         console.log(msg + ' osoitteesta ' + socket.request.socket.remoteAddress);

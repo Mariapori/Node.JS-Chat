@@ -12,9 +12,9 @@
             </ul>
         </div>
         <div class="viesti">
-                     <input placeholder="Nimimerkki" id="nimimerkki"/>
-                    <input placeholder="Viestisi" id="viesti"/>
-                    <button id="laheta">Lähetä</button>
+            <input placeholder="Nimimerkki" id="nimimerkki"/>
+            <input placeholder="Viestisi" id="viesti"/>
+            <button id="laheta">Lähetä</button>
         </div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -28,7 +28,7 @@ var viestit = document.getElementById('viestit');
 laheta.addEventListener('click', function(e) {
   e.preventDefault();
   if (nick.value && message.value) {
-    socket.emit('chat message', nick.value + ': ' + message.value);
+    socket.emit('chat message', nick.value + ': ' + message.value, nick.value);
     message.value = '';
   }
 });
@@ -39,6 +39,17 @@ socket.on('chat message', function(msg) {
     viestit.appendChild(item);
     window.scrollTo(0, document.body.scrollHeight);
   });
+
+socket.on('nickname set', function() {
+    nick.setAttribute('readonly', true);
+});
+
+socket.on('user left'), function(nickname){
+    var item = document.createElement('li');
+    item.textContent = nickname + ' poistui';
+    viestit.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+}
 </script>
     </body>
 </html>
