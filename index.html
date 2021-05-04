@@ -25,6 +25,7 @@ var message = document.getElementById('viesti');
 var laheta = document.getElementById('laheta');
 var viestit = document.getElementById('viestit');
 
+
 laheta.addEventListener('click', function(e) {
   e.preventDefault();
   if (nick.value && message.value) {
@@ -42,6 +43,15 @@ socket.on('chat message', function(msg) {
 
 socket.on('nickname set', function() {
     nick.setAttribute('readonly', true);
+});
+
+socket.on('history', function(history) {
+    for (let index = 0; index < history.length; index++) {
+        var item = document.createElement('li');
+        item.textContent = history[index];
+        viestit.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+    }
 });
 
 </script>
