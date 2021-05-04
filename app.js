@@ -25,10 +25,11 @@ io.on('connection', (socket) => {
         socket.nick = nick;
         io.to(socket.id).emit('nickname set');
       }
-        var nowtime = new Date().toLocaleTimeString("fi-FI")
+        var now = new Date().toLocaleDateString("fi-FI");
+        var nowtime = new Date().toLocaleTimeString("fi-FI");
         console.log(msg + ' osoitteesta ' + socket.request.socket.remoteAddress);
         io.emit('chat message', nowtime + ' ' + msg);
-        history.push(nowtime + ' ' + msg);
+        history.push(now + ' | ' + nowtime + ' ' + msg);
       });
 
   });
