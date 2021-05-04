@@ -18,7 +18,7 @@
         </div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-var socket = io();
+const socket = io("ws://localhost:5665");
 
 var nick = document.getElementById('nimimerkki');
 var message = document.getElementById('viesti');
@@ -38,7 +38,7 @@ socket.on('chat message', function(msg) {
     var item = document.createElement('li');
     item.textContent = msg;
     viestit.appendChild(item);
-    kesk.scrollTo(0, document.body.scrollHeight);
+    kesk.scrollTo(0, kesk.scrollHeight);
   });
 
 socket.on('nickname set', function() {
@@ -50,7 +50,7 @@ socket.on('history', function(history) {
         var item = document.createElement('li');
         item.textContent = history[index];
         viestit.appendChild(item);
-        kesk.scrollTo(0, document.body.scrollHeight);
+        kesk.scrollTo(0, kesk.scrollHeight);
     }
 });
 
