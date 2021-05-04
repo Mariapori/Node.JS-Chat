@@ -33,6 +33,6 @@ io.on('connection', (socket) => {
   });
   
 
-server.listen(3000,'0.0.0.0', () => {
-  console.log('Kuunnellaan *:3000');
+server.listen(5665,'0.0.0.0', () => {
+  console.log('Kuunnellaan *:5665');
 });
