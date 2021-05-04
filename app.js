@@ -35,7 +35,7 @@ io.on('connection', (socket) => {
   });
   
 
-server.listen(5665,'0.0.0.0', () => {
+server.listen(5665, () => {
   console.log('Kuunnellaan *:5665');
 });
 
