@@ -73,6 +73,10 @@ socket.on('OnlineUsers', function(data) {
     online.innerHTML = "";
     for (let index = 0; index < data.length; index++) {
         var item = document.createElement('li');
+        item.addEventListener('click', function(e){
+            e.preventDefault();
+            Kuiskaa(data[index]);
+        });
         item.textContent = data[index].nick;
         online.appendChild(item);
         online.scrollTo(0, online.scrollHeight);
@@ -86,9 +90,23 @@ socket.on('user left', function(msg) {
     kesk.scrollTo(0, kesk.scrollHeight);
 });
 
+socket.on('Kuiskaus', function(msg){
+    var item = document.createElement('li');
+    item.textContent = msg;
+    viestit.appendChild(item);
+    kesk.scrollTo(0, kesk.scrollHeight);
+});
+
 function pollOnline(){
     socket.emit('GetUsers');
     setTimeout(pollOnline, 1000);
+}
+
+function Kuiskaa(keskustelija){
+    var viesti = prompt("Kuiskaa:");
+    if(viesti != null && viesti != ""){
+        socket.emit('Kuiskaa', keskustelija, viesti);
+    }
 }
 
 }

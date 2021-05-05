@@ -39,6 +39,12 @@ io.on('connection', (socket) => {
       io.emit('OnlineUsers', users);
    });
 
+   socket.on('Kuiskaa', (keskustelija, viesti) => {
+    var nowtime = new Date().toLocaleTimeString("fi-FI");
+    io.to(keskustelija.id).emit('Kuiskaus', nowtime + ' ' + socket.nick + ' kuiskasi: ' + viesti);
+    io.to(socket.id).emit('Kuiskaus', nowtime + ' ' + 'Kuiskasit nimimerkille ' + keskustelija.nick + ': ' + viesti);
+ });
+
 
     socket.on('chat message', (msg, nick) => {
       if(socket.nick == null){
