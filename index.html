@@ -12,7 +12,7 @@
             </ul>
         </div>
         <div class="viesti">
-            <input placeholder="Viestisi" id="viesti"/>
+            <textarea placeholder="Viestisi" id="viesti"></textarea>
             <button id="laheta">Lähetä</button>
         </div>
         <div>
@@ -109,6 +109,14 @@ function Kuiskaa(keskustelija){
     }
 }
 
+message.addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    laheta.click();
+  }
+});
+
+
 }
 
 </script>
@@ -133,8 +141,12 @@ function Kuiskaa(keskustelija){
         border: 1px solid black;
         padding: 5px;
     }
-input{
-    width: fit-content;
+textarea{
+    width: 100%;
+    max-width: -webkit-fill-available;
+}
+button{
+    margin: 4px;
 }
 #viestit{
     list-style: none;
