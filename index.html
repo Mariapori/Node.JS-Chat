@@ -88,7 +88,7 @@ socket.on('user left', function(msg) {
 
 function pollOnline(){
     socket.emit('GetUsers');
-    setTimeout(pollOnline, 5000);
+    setTimeout(pollOnline, 1000);
 }
 
 }
