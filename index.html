@@ -12,27 +12,38 @@
             </ul>
         </div>
         <div class="viesti">
-            <input placeholder="Nimimerkki" id="nimimerkki"/>
             <input placeholder="Viestisi" id="viesti"/>
             <button id="laheta">Lähetä</button>
         </div>
+        <div>
+            <b>Online:</b>
+            <ul id="onlineusers">
+
+            </ul>
+        </div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-const socket = io();
-
-var nick = document.getElementById('nimimerkki');
-var message = document.getElementById('viesti');
-var laheta = document.getElementById('laheta');
-var viestit = document.getElementById('viestit');
-var kesk = document.getElementById('keskustelu');
+var nick = prompt("Nimimerkkisi:");
+if(nick != null && nick != ""){
+    var socket = io();
+    var message = document.getElementById('viesti');
+    var laheta = document.getElementById('laheta');
+    var viestit = document.getElementById('viestit');
+    var kesk = document.getElementById('keskustelu');
+    var online = document.getElementById('onlineusers');
+    setTimeout(pollOnline, 1000);
 
 laheta.addEventListener('click', function(e) {
   e.preventDefault();
-  if (nick.value && message.value) {
-    socket.emit('chat message', nick.value + ': ' + message.value, nick.value);
+  if (nick && message.value) {
+    socket.emit('chat message', nick + ': ' + message.value, nick);
     message.value = '';
   }
 });
+
+socket.on('user connected', function() {
+    socket.emit('set user', nick);
+  });
 
 socket.on('chat message', function(msg) {
     var item = document.createElement('li');
@@ -41,9 +52,6 @@ socket.on('chat message', function(msg) {
     kesk.scrollTo(0, kesk.scrollHeight);
   });
 
-socket.on('nickname set', function() {
-    nick.setAttribute('readonly', true);
-});
 
 socket.on('history', function(history) {
     for (let index = 0; index < history.length; index++) {
@@ -53,6 +61,37 @@ socket.on('history', function(history) {
         kesk.scrollTo(0, kesk.scrollHeight);
     }
 });
+
+socket.on('user welcome', function(msg) {
+    var item = document.createElement('li');
+    item.textContent = msg;
+    viestit.appendChild(item);
+    kesk.scrollTo(0, kesk.scrollHeight);
+});
+
+socket.on('OnlineUsers', function(data) {
+    online.innerHTML = "";
+    for (let index = 0; index < data.length; index++) {
+        var item = document.createElement('li');
+        item.textContent = data[index].nick;
+        online.appendChild(item);
+        online.scrollTo(0, online.scrollHeight);
+    }
+});
+
+socket.on('user left', function(msg) {
+    var item = document.createElement('li');
+    item.textContent = msg;
+    viestit.appendChild(item);
+    kesk.scrollTo(0, kesk.scrollHeight);
+});
+
+function pollOnline(){
+    socket.emit('GetUsers');
+    setTimeout(pollOnline, 5000);
+}
+
+}
 
 </script>
     </body>
@@ -81,6 +120,10 @@ input{
 }
 #viestit{
     list-style: none;
+}
+#online{
+    list-style: none;
+    overflow-y: scroll;
 }
 
 </style>
