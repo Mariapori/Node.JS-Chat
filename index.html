@@ -15,12 +15,14 @@
             <textarea placeholder="Viestisi" id="viesti"></textarea>
             <button id="laheta">Lähetä</button>
         </div>
+        <i>Kuiskaa painamalla nimimerkkiä.</i>
         <div>
             <b>Online:</b>
             <ul id="onlineusers">
 
             </ul>
         </div>
+        <p>© Topias Mariapori, 2021</p>
 <script src="/socket.io/socket.io.js"></script>
 <script>
 var nick = prompt("Nimimerkkisi:");
@@ -73,11 +75,13 @@ socket.on('OnlineUsers', function(data) {
     online.innerHTML = "";
     for (let index = 0; index < data.length; index++) {
         var item = document.createElement('li');
-        item.addEventListener('click', function(e){
+        item.textContent = data[index].nick;
+        if(data[index].id != socket.id){
+            item.addEventListener('click', function(e){
             e.preventDefault();
             Kuiskaa(data[index]);
         });
-        item.textContent = data[index].nick;
+        }
         online.appendChild(item);
         online.scrollTo(0, online.scrollHeight);
     }
@@ -156,6 +160,19 @@ button{
 #online{
     list-style: none;
     overflow-y: scroll;
+}
+#onlineusers{
+    list-style: none;
+    width: max-content;
+}
+
+#onlineusers li{
+    background-color: lightblue;
+    padding: 10px;
+    border: 1px solid black;
+    margin: 10px;
+    font-weight: bold;
+    cursor:pointer;
 }
 
 </style>
