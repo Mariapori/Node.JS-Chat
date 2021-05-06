@@ -103,9 +103,11 @@ function pollOnline(){
 }
 
 function Kuiskaa(keskustelija){
-    var viesti = prompt("Kuiskaa nimimerkille " + keskustelija.nick + ":");
+    if(keskustelija.id != socket.id){
+        var viesti = prompt("Kuiskaa nimimerkille " + keskustelija.nick + ":");
     if(viesti != null && viesti != ""){
         socket.emit('Kuiskaa', keskustelija, viesti);
+    }
     }
 }
 
