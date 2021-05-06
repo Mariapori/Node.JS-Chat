@@ -27,6 +27,16 @@
 <script>
 var nick = prompt("Nimimerkkisi:");
 if(nick != null && nick != ""){
+    if (!("Notification" in window)) {
+  }else if (Notification.permission === "granted") {
+    console.log('Ilmoitukset hyväksytty.');
+  }else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then(function (permission) {
+      if (permission === "granted") {
+        console.log('Ilmoitukset hyväksytty.');
+      }
+    });
+  }
     var socket = io();
     var message = document.getElementById('viesti');
     var laheta = document.getElementById('laheta');
@@ -48,6 +58,7 @@ socket.on('user connected', function() {
   });
 
 socket.on('chat message', function(msg) {
+    var notify = new Notification(msg);
     var item = document.createElement('li');
     item.textContent = msg;
     viestit.appendChild(item);
@@ -65,6 +76,7 @@ socket.on('history', function(history) {
 });
 
 socket.on('user welcome', function(msg) {
+    var notify = new Notification(msg);
     var item = document.createElement('li');
     item.textContent = msg;
     viestit.appendChild(item);
@@ -88,6 +100,7 @@ socket.on('OnlineUsers', function(data) {
 });
 
 socket.on('user left', function(msg) {
+    var notify = new Notification(msg);
     var item = document.createElement('li');
     item.textContent = msg;
     viestit.appendChild(item);
@@ -95,6 +108,7 @@ socket.on('user left', function(msg) {
 });
 
 socket.on('Kuiskaus', function(msg){
+    var notify = new Notification(msg);
     var item = document.createElement('li');
     item.textContent = msg;
     viestit.appendChild(item);
