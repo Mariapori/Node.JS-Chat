@@ -149,7 +149,9 @@ message.addEventListener("keyup", function(event) {
     }
 textarea{
     width: 100%;
-    max-width: -webkit-fill-available;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
 }
 button{
     margin: 4px;
