@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
         socket.nick = nick;
         users.push({ id : socket.id, nick : nick});
         console.log(nick + ' liittyi');
-        io.emit('user welcome', nick + ' liittyi.');
+        socket.broadcast.emit('user welcome', nick + ' liittyi.');
      });
 
      socket.on('GetUsers', () => {
