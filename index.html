@@ -16,7 +16,7 @@
             <button id="laheta">Lähetä</button>
         </div>
         <i>Kuiskaa painamalla nimimerkkiä.</i>
-        <div>
+        <div id="users">
             <b>Online:</b>
             <ul id="onlineusers">
 
@@ -26,8 +26,10 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
 var nick = prompt("Nimimerkkisi:");
+
 if(nick != null && nick != ""){
     var socket = io();
+    socket.emit('CheckNick', nick);
     var message = document.getElementById('viesti');
     var laheta = document.getElementById('laheta');
     var viestit = document.getElementById('viestit');
@@ -46,6 +48,11 @@ laheta.addEventListener('click', function(e) {
 socket.on('user connected', function() {
     socket.emit('set user', nick);
   });
+
+socket.on('Nick exist', function() {
+    alert('Nimimerkki on jo käytössä!');
+    window.location.reload();
+});
 
 socket.on('chat message', function(msg) {
     var item = document.createElement('li');
@@ -122,14 +129,6 @@ message.addEventListener("keyup", function(event) {
   }
 });
 
-function urlify(text) {
-  var urlRegex = /(https?:\/\/[^\s]+)/g;
-  return text.replace(urlRegex, function(url) {
-    return '<a href="' + url + '">' + url + '</a>';
-  });
-
-}
-
 
 }
 
@@ -167,10 +166,6 @@ button{
 #viestit{
     list-style: none;
 }
-#online{
-    list-style: none;
-    overflow-y: scroll;
-}
 #onlineusers{
     list-style: none;
     width: max-content;
@@ -183,6 +178,10 @@ button{
     margin: 10px;
     font-weight: bold;
     cursor:pointer;
+}
+#users{
+    overflow-y: scroll;
+    max-height: 300px;
 }
 
 </style>

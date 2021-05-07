@@ -39,6 +39,14 @@ io.on('connection', (socket) => {
       io.emit('OnlineUsers', users);
    });
 
+   socket.on('CheckNick', (nick) => {
+    for (let index = 0; index < users.length; index++) {
+      if(users[index].nick == nick){
+        io.to(socket.id).emit("Nick exist");
+      }
+    }
+ });
+
    socket.on('Kuiskaa', (keskustelija, viesti) => {
     var nowtime = new Date().toLocaleTimeString("fi-FI");
     io.to(keskustelija.id).emit('Kuiskaus', nowtime + ' ' + socket.nick + ' kuiskasi: ' + viesti);
