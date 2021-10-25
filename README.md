@@ -2,6 +2,8 @@
 
 Yksinkertainen chat NodeJS + socket.io
 
+Live DEMO: https://chat.mariapori.fi
+
 Ominaisuudet:
 
 - Reaaliaikainen viestien lähetys nimimerkillä
