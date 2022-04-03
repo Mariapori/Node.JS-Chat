@@ -209,9 +209,6 @@ socket.on('OnlineUsers', function(data) {
     for (let index = 0; index < data.length; index++) {
         var item = document.createElement('li');
         item.textContent = data[index].nick;
-        if(data[index].id != socket.id){
-            item.hidden = true;
-        }
         online.appendChild(item);
         online.scrollTo(0, online.scrollHeight);
     }
