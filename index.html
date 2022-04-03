@@ -1,11 +1,138 @@
 <!DOCTYPE html>
 <html lang="fi">
     <head>
-        <title>MariaporinChat</title>
+        <title>Ristiäiset 10.04.2022</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+        <style>
+            body{
+                margin: 10px 10px 10px 10px;
+            }
+            .keskustelu{
+                background-color: lightpink;
+                margin:0px;
+                padding: 0px;
+                border:1px solid black;
+                overflow-y: scroll;
+                min-height: 200px;
+                max-height: 200px;
+            }
+            .viesti{
+                background-color: white;
+                border: 1px solid black;
+                padding: 5px;
+            }
+        textarea{
+            width: 100%;
+            -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+            -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+            box-sizing: border-box;         /* Opera/IE 8+ */
+        }
+        button{
+            margin: 4px;
+        }
+        #viestit{
+            list-style: none;
+        }
+        #onlineusers{
+            list-style: none;
+            width: max-content;
+        }
+        
+        #onlineusers li{
+            background-color: lightpink;
+            padding: 10px;
+            border: 1px solid black;
+            margin: 10px;
+            font-weight: bold;
+            cursor:pointer;
+        }
+        #users{
+            overflow-y: scroll;
+            max-height: 300px;
+        }
+        video{
+            width: 100%;
+        }
+        
+        #striimialue{
+            max-width: 1200px;
+            margin:0 auto;
+        }
+        
+        #muistutus{
+            background-color: lightpink;
+            color: black;
+            padding: 10px;
+            margin: 0 auto;
+            border:1px solid black;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            display: block;
+            text-align: center;
+            font-size: large;
+        }
+        #otsake{
+            margin:0 auto;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            text-align: center;
+            width: 100%;
+        }
+        </style>
     </head>
     <body>
+        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+        <h1 id="otsake">Ristiäiset 10.04.2022</h1>
+        <b id="muistutus">Muista laittaa äänet päälle videosta!</b>
+<div id="striimialue">
+    <video id="video" controls></video>
+</div>
+        <script>
+          if (Hls.isSupported()) {
+            var video = document.getElementById('video');
+            var hls = new Hls();
+            hls.attachMedia(video);
+            hls.on(Hls.Events.ERROR, function (event, data) {
+  if (data.fatal) {
+    switch (data.type) {
+      case Hls.ErrorTypes.NETWORK_ERROR:
+
+        alert("Striimi ei ole vielä alkanut!");
+        hls.startLoad();
+        break;
+      case Hls.ErrorTypes.MEDIA_ERROR:
+        alert("Striimi ei ole vielä alkanut!");
+        hls.recoverMediaError();
+        break;
+      default:
+        hls.destroy();
+        break;
+    }
+  }
+});
+            hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+              hls.loadSource('https://tv.mariapori.fi/mystream/index.m3u8');
+              hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+                  console.log("Yhdistetty.");
+              });
+            });
+video.addEventListener('canplaythrough', function () {
+            var promise = video.play();
+            if (promise !== undefined) {
+                promise.catch(function(error) {
+                    console.error('Auto-play was prevented');
+                }).then(function() {
+                    console.info('Auto-play started');
+                });
+            }
+}); 
+video.muted = 'muted';
+video.autoplay = 'autoplay';
+video.playsinline = 'true';
+          }
+          
+        </script>
         <div class="keskustelu" id="keskustelu">
             <ul id="viestit">
 
@@ -15,17 +142,16 @@
             <textarea placeholder="Viestisi" id="viesti"></textarea>
             <button id="laheta">Lähetä</button>
         </div>
-        <i>Kuiskaa painamalla nimimerkkiä.</i>
         <div id="users">
-            <b>Online:</b>
+            <b>Katsojat:</b>
             <ul id="onlineusers">
 
             </ul>
         </div>
-        <p>© Topias Mariapori, 2021</p>
+        <p>© Topias Mariapori, 2022</p>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-var nick = prompt("Nimimerkkisi:");
+var nick = prompt("Osallistuja:");
 
 if(nick != null && nick != ""){
     var socket = io();
@@ -84,10 +210,7 @@ socket.on('OnlineUsers', function(data) {
         var item = document.createElement('li');
         item.textContent = data[index].nick;
         if(data[index].id != socket.id){
-            item.addEventListener('click', function(e){
-            e.preventDefault();
-            Kuiskaa(data[index]);
-        });
+            item.hidden = true;
         }
         online.appendChild(item);
         online.scrollTo(0, online.scrollHeight);
@@ -101,25 +224,10 @@ socket.on('user left', function(msg) {
     kesk.scrollTo(0, kesk.scrollHeight);
 });
 
-socket.on('Kuiskaus', function(msg){
-    var item = document.createElement('li');
-    item.textContent = msg;
-    viestit.appendChild(item);
-    kesk.scrollTo(0, kesk.scrollHeight);
-});
 
 function pollOnline(){
     socket.emit('GetUsers');
     setTimeout(pollOnline, 1000);
-}
-
-function Kuiskaa(keskustelija){
-    if(keskustelija.id != socket.id){
-        var viesti = prompt("Kuiskaa nimimerkille " + keskustelija.nick + ":");
-    if(viesti != null && viesti != ""){
-        socket.emit('Kuiskaa', keskustelija, viesti);
-    }
-    }
 }
 
 message.addEventListener("keyup", function(event) {
@@ -135,53 +243,3 @@ message.addEventListener("keyup", function(event) {
 </script>
     </body>
 </html>
-
-<style>
-    body{
-        margin: 10px 10px 10px 10px;
-    }
-    .keskustelu{
-        background-color: lightblue;
-        margin:0px;
-        padding: 0px;
-        border:1px solid black;
-        overflow-y: scroll;
-        min-height: 200px;
-        max-height: 200px;
-    }
-    .viesti{
-        background-color: white;
-        border: 1px solid black;
-        padding: 5px;
-    }
-textarea{
-    width: 100%;
-    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
-    box-sizing: border-box;         /* Opera/IE 8+ */
-}
-button{
-    margin: 4px;
-}
-#viestit{
-    list-style: none;
-}
-#onlineusers{
-    list-style: none;
-    width: max-content;
-}
-
-#onlineusers li{
-    background-color: lightblue;
-    padding: 10px;
-    border: 1px solid black;
-    margin: 10px;
-    font-weight: bold;
-    cursor:pointer;
-}
-#users{
-    overflow-y: scroll;
-    max-height: 300px;
-}
-
-</style>
