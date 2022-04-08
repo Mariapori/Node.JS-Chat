@@ -60,7 +60,7 @@
             margin:0 auto;
         }
         
-        #muistutus{
+        .muistutus{
             background-color: lightpink;
             color: black;
             padding: 10px;
@@ -80,11 +80,13 @@
             width: 100%;
         }
         </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     </head>
     <body>
         <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
         <h1 id="otsake">Ristiäiset 10.04.2022</h1>
-        <b id="muistutus">Muista laittaa äänet päälle videosta!</b>
+        <b class="muistutus">Muista laittaa äänet päälle videosta!</b>
+        <b id="striimiTila" class="muistutus"></b>
 <div id="striimialue">
     <video id="video" controls></video>
 </div>
@@ -97,12 +99,11 @@
   if (data.fatal) {
     switch (data.type) {
       case Hls.ErrorTypes.NETWORK_ERROR:
-
-        alert("Striimi ei ole vielä alkanut!");
-        hls.startLoad();
+        var ilmoitus = $("#striimiTila");
+        ilmoitus.text("Lähetys ei ole vielä alkanut.");
+        hls.loadSource('https://tv.mariapori.fi/mystream/index.m3u8');
         break;
       case Hls.ErrorTypes.MEDIA_ERROR:
-        alert("Striimi ei ole vielä alkanut!");
         hls.recoverMediaError();
         break;
       default:
@@ -114,7 +115,8 @@
             hls.on(Hls.Events.MEDIA_ATTACHED, function () {
               hls.loadSource('https://tv.mariapori.fi/mystream/index.m3u8');
               hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-                  console.log("Yhdistetty.");
+                    var ilmoitus = $("#striimiTila");
+                    ilmoitus.hide();
               });
             });
 video.addEventListener('canplaythrough', function () {
