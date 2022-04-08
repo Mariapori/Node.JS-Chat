@@ -21,19 +21,22 @@ io.on('connection', (socket) => {
     GetHistory(socket);
 
     socket.on('disconnect', () => {
+      if(socket.nick != null){
         var now = new Date().toLocaleDateString("fi-FI");
         var nowtime = new Date().toLocaleTimeString("fi-FI");
         io.emit('user left', socket.nick + ' poistui.');
         console.log(socket.nick + ' poistui');
-        logStream.write(now + ' | ' + nowtime + ' ' + nick + ' poistui\n');
+        logStream.write(now + ' | ' + nowtime + ' ' + socket.nick + ' poistui\n');
         for (let index = 0; index < users.length; index++) {
           if(users[index].id == socket.id){
             users.splice(index, 1);
           }
         }
+      }
     });
     
      socket.on('set user', (nick) => {
+       if(nick != null){
         var now = new Date().toLocaleDateString("fi-FI");
         var nowtime = new Date().toLocaleTimeString("fi-FI");
         socket.nick = nick;
@@ -41,6 +44,7 @@ io.on('connection', (socket) => {
         console.log(nick + ' liittyi');
         logStream.write(now + ' | ' + nowtime + ' ' + nick + ' liittyi\n');
         socket.broadcast.emit('user welcome', nick + ' liittyi.');
+       }
      });
 
      socket.on('GetUsers', () => {
@@ -55,7 +59,9 @@ io.on('connection', (socket) => {
     }
  });
 
-
+socket.on('error', (error) => {
+  console.log(error);
+});
 
     socket.on('chat message', (msg, nick) => {
       if(socket.nick == null){
